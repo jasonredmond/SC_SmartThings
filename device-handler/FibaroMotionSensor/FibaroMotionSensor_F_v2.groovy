@@ -238,17 +238,17 @@ def zwaveEvent(physicalgraph.zwave.commands.sensormultilevelv5.SensorMultilevelR
     def map = [ displayed: true ]
     switch (cmd.sensorType) {
     	case 1:
-        	map.name = "temperature"
-            map.unit = cmd.scale == 1 ? "F" : "C"
-            //map.value = convertTemperatureIfNeeded(cmd.scaledSensorValue, map.unit, cmd.precision)
-            //no convertion for the value
-            map.value = cmd.scaledSensorValue.toInteger().toString()
-            break
-    	case 3:
+		map.name = "temperature"		
+		def cmdScale = cmd.scale == 1 ? "F" : "C"
+        	map.value = Math.round(convertTemperatureIfNeeded(cmd.scaledSensorValue, cmdScale, cmd.precision).toFloat()).toString()
+		map.unit  = getTemperatureScale()
+	break;
+
+	case 3:
         	map.name = "illuminance"
-            map.value = cmd.scaledSensorValue.toInteger().toString()
-            map.unit = "lux"
-            break
+		map.value = cmd.scaledSensorValue.toInteger().toString()
+		map.unit = "lux"
+	break;
     }
 
 	createEvent(map)
